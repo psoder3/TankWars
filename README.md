@@ -130,7 +130,9 @@ https://youtu.be/HcBJ-RTERqM
 
 ## Here are some videos to help you get started:
 https://www.youtube.com/watch?v=dIWPcICkJHY
+
 https://www.youtube.com/watch?v=5JbqSgMCo78
+
 https://www.youtube.com/watch?v=UvMEr2K-eII
 
 ## Testing Tips:
