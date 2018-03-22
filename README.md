@@ -1,8 +1,5 @@
 # AITankWars
 
-## Here is a demo video:
-https://youtu.be/HcBJ-RTERqM
-
 ## Project Description
 
 Participants will create a class that inherits from Tank class and can do anything they want in the overridden method tankAction(). It gets executed every half-second. If you were to edit the constructor you could get around that so that's off limits. Other than that I believe it's pretty bulletproof.
@@ -127,3 +124,14 @@ public class DumbTank extends Tank {
 }
 
 ```
+
+## Here is a demo video:
+https://youtu.be/HcBJ-RTERqM
+
+## Here are some videos to help you get started:
+https://www.youtube.com/watch?v=dIWPcICkJHY
+https://www.youtube.com/watch?v=5JbqSgMCo78
+https://www.youtube.com/watch?v=UvMEr2K-eII
+
+## Testing Tips:
+I've programmed a special type of tank that can be controlled (for purposes of testing another tank's response to its actions). To included this tank include a ControlTank in the arrangement you're using. To move up,left,down,right use keys W,A,S,D. To rotate right or left use l and k. To shoot use space.
