@@ -23,6 +23,7 @@ public class GameObject {
     private boolean canMakeAction = true;
     private Arena arena;
     private boolean alive = true;
+    private String team_name;
     
     // super constructor for a bullet to call
     public GameObject(int rotationDegrees, double x, double y, Tank tank)
@@ -50,6 +51,16 @@ public class GameObject {
     public double getY()
     {
         return y;
+    }
+    
+    public String getTeam()
+    {
+        return team_name;
+    }
+    
+    public void setTeam(String team_name)
+    {
+        this.team_name = team_name;
     }
     
     public List<Bullet> getBullets()

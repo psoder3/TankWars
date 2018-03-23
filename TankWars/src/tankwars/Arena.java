@@ -14,7 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -23,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
+import tankwars.tanks.ControlTank;
 
 /**
  *
@@ -30,6 +34,8 @@ import javax.swing.Timer;
  */
 public class Arena extends JComponent {
 
+    public boolean canKillTeammates = true;
+    public boolean bulletsCollide = false;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int screen_width = (int)screenSize.getWidth();
     int screen_height = (int)screenSize.getHeight();
@@ -54,6 +60,7 @@ public class Arena extends JComponent {
     private boolean gameOver = false;
     private ArrayList<Tank> resultTanks = new ArrayList();
     public ArrayList<String> tankNames;
+    boolean isTeamBattle = false;
     
     void setFrameTimer(Frame_Timer frameTimer) {
         this.frameTimer = frameTimer;
@@ -115,6 +122,11 @@ public class Arena extends JComponent {
         List<Bullet> toRemove = new ArrayList();
         for (Bullet b : bullets)
         {
+            if (gameOver)
+            {
+                //toRemove.add(b);
+                b.destroy();
+            }
             if (b.getX() < -1)
             {
                 toRemove.add(b);
@@ -189,6 +201,10 @@ public class Arena extends JComponent {
             }
 
         }
+        if (isTeamBattle)
+        {
+            return;
+        }
         int tanksWithMostKills = 0;
         for (Tank t : tanks)
         {
@@ -223,6 +239,10 @@ public class Arena extends JComponent {
         }       
     }
     
+    
+    
+    
+    
     public void endGame()
     {
         
@@ -250,6 +270,90 @@ public class Arena extends JComponent {
         //JOptionPane.showMessageDialog(this, getResults());
     }
     
+    public void endGameTeamBattle()
+    {
+        gameOver = true;
+        if (tanks.size() > 1)
+        {
+            
+            calculateTieBreaker();
+        }
+        else
+        {
+            tanks.get(0).setPlaceFinished(1);
+            resultTanks.add(tanks.get(0));
+        }
+        JTextArea textArea = new JTextArea("TEAM RESULTS\n\n" + getTeamResults() + "\n\nINDIVIDUAL RESULTS\n\n" + getResults());
+        JScrollPane scrollPane = new JScrollPane(textArea);  
+        textArea.setLineWrap(true);  
+        textArea.setWrapStyleWord(true);
+        textArea.setEditable(false);
+        Font currentFont = textArea.getFont();
+        Font newFont = currentFont.deriveFont(currentFont.getSize() * 2F);
+        textArea.setFont(newFont);
+        scrollPane.setPreferredSize(new Dimension(500, 500));
+        JOptionPane.showMessageDialog(this, scrollPane, "Results",  
+                                       JOptionPane.PLAIN_MESSAGE);
+        //JOptionPane.showMessageDialog(this, getResults());
+    }
+    
+    private String getTeamResults()
+    {
+        HashMap<String, Integer> teamSurviveCounterMap = new HashMap();
+        HashMap<String, Integer> teamKillCounterMap = new HashMap();
+        
+        String message = "";
+        for (Tank t : resultTanks)
+        {
+            teamSurviveCounterMap.put(t.getTeam(), 0);
+            teamKillCounterMap.put(t.getTeam(), 0);
+        }
+        for (Tank t : tanks)
+        {
+            int numberLeft = 1;
+            String teamName = t.getTeam();
+            if (teamSurviveCounterMap.containsKey(teamName))
+            {
+                int currentNumLeft = teamSurviveCounterMap.get(teamName);
+                numberLeft += currentNumLeft;
+            }
+            teamSurviveCounterMap.put(teamName,numberLeft);
+            int numberKills = t.getKills();
+            if (teamKillCounterMap.containsKey(t.getTeam()))
+            {
+                numberKills += teamKillCounterMap.get(t.getTeam());
+            }
+            teamKillCounterMap.put(t.getTeam(),numberKills);
+        }
+        for (Tank t : resultTanks)
+        {
+            int numberKills = t.getKills();
+            if (teamKillCounterMap.containsKey(t.getTeam()))
+            {
+                numberKills += teamKillCounterMap.get(t.getTeam());
+            }
+            teamKillCounterMap.put(t.getTeam(),numberKills);
+        }
+        message += "\nTANKS LEFT:\n";
+        Iterator it = teamSurviveCounterMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            message += "Team " + pair.getKey() + ": " + pair.getValue() + "\n";
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        
+        message += "\nKILLS:\n";
+        Iterator it2 = teamKillCounterMap.entrySet().iterator();
+        while (it2.hasNext()) {
+            Map.Entry pair = (Map.Entry)it2.next();
+            message += "Team " + pair.getKey() + ": " + pair.getValue() + "\n";
+            it2.remove(); // avoids a ConcurrentModificationException
+        }
+        
+        return message;
+    }
+    
+    
     private String getResults()
     {
         String message = "";
@@ -272,22 +376,45 @@ public class Arena extends JComponent {
                 Timer timer = new Timer(millisecondInterval, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
+                        removeBulletsOffBoard();
+                        
                         if (gameOver)
                         {
                             return;
                         }
-                        if (tanks.size() < 2)
+                        
+                        if (isTeamBattle)
                         {
+                            String firstTeamName = tanks.get(0).getTeam();
+                            boolean teamGameOver = true;
+                            for (Tank t : tanks)
+                            {
+                                if (!t.getTeam().equals(firstTeamName))
+                                {
+                                    teamGameOver = false;
+                                }
+                            }
+                            if (teamGameOver)
+                            {
+                                gameOver = true;
+                                removeBulletsOffBoard();
+                                endGameTeamBattle();
+                            }
+                        }
+                        else if (tanks.size() < 2)
+                        {
+                            gameOver = true;
+                            removeBulletsOffBoard();                           
                             endGame();
                             stop();
                         }
+                        
                         
                         if (actions.size() > 0)
                         {
                             removeDuplicateActions();
                             doAction(actions.get(0));
                             actions.remove(0);
-                            removeBulletsOffBoard();
                         }
                     }
 
@@ -321,7 +448,17 @@ public class Arena extends JComponent {
                         if (secondsLeft < 1)
                         {
                             secondsLeft = 0;
-                            endGame();
+                            gameOver = true;
+                            removeBulletsOffBoard();
+                            if (isTeamBattle)
+                            {
+                                                                  
+                                endGameTeamBattle();
+                            }
+                            else
+                            {
+                                endGame();
+                            }
                         }
                         //System.out.println("SECONDS LEFT: " + secondsLeft);
                         frameTimer.repaint();
@@ -350,10 +487,16 @@ public class Arena extends JComponent {
         {
             return;
         }
-        if (tanks.size() == 23)
+        if (tank.getClass() == ControlTank.class)
         {
-            controlTank1 = tanks.get(4);
-            controlTank2 = tanks.get(22);
+            if (controlTank1 == null)
+            {
+                controlTank1 = tank;
+            }
+            else
+            {
+                controlTank2 = tank;
+            }
         }
         tanks.add(tank);
         tankPlaces++;
@@ -440,45 +583,64 @@ public class Arena extends JComponent {
     
     boolean checkCollision(Bullet b)
     {
+        
+        Tank owner = null;
+        for (Tank t : tanks)
+        {
+            if (b.isBulletsOwner(t))
+            {
+                owner = t;
+                break;
+            }
+        }
+        
+        
         for (Tank tank : tanks)
         {
-            if (b.getX() == tank.getX() && b.getY() == tank.getY() && !b.isBulletsOwner(tank))
+            if (b.getX() == tank.getX() && b.getY() == tank.getY())
             {
+                if ((canKillTeammates == false && tank.getTeam().equals(b.getTeam())) || tank.equals(owner))
+                {
+                    continue;
+                }
                 //tanks.remove(tank);
                 //grid[(int)tank.getY()][(int)tank.getX()] = 0;
                 tank.destroy();
                 awardBulletPoints(b, true);
                 b.destroy();
-                System.out.println(tank.toString());
+                //System.out.println(tank.toString());
                 tank.setPlaceFinished(tanks.size());
 
                 tanks.remove(tank);
                 resultTanks.add(tank);
                 if (tanks.size() == 1)
                 {
-                    System.out.println(tanks.get(0).toString());
+                    //System.out.println(tanks.get(0).toString());
                 }
                 return true;
             }
         }
-        for (Bullet bullet : bullets)
+        if (bulletsCollide)
         {
-            if (b.getX() == bullet.getX() && b.getY() == bullet.getY())
+            for (Bullet bullet : bullets)
             {
-                if (b.equals(bullet))
+                if (b.getX() == bullet.getX() && b.getY() == bullet.getY())
                 {
-                    continue;
-                }
-                bullets.remove(bullet);
-                bullets.remove(b);
-                
-                awardBulletPoints(bullet, false);
-                awardBulletPoints(bullet, false);
+                    if (b.equals(bullet))
+                    {
+                        continue;
+                    }
+                    bullets.remove(bullet);
+                    bullets.remove(b);
 
-                b.destroy();
-                //grid[(int)bullet.y][(int)bullet.x] = 0;
-                bullet.destroy();
-                return true;
+                    awardBulletPoints(bullet, false);
+                    awardBulletPoints(bullet, false);
+
+                    b.destroy();
+                    //grid[(int)bullet.y][(int)bullet.x] = 0;
+                    bullet.destroy();
+                    return true;
+                }
             }
         }
         return false;
@@ -541,7 +703,7 @@ public class Arena extends JComponent {
     {
         for (Tank t : tanks)
         {
-            if (b.isBulletsOwner(t))
+            if (b.isBulletsOwner(t) || (isTeamBattle && b.getTeam().equals(t.getTeam())))
             {
                 continue;
             }
@@ -621,6 +783,8 @@ public class Arena extends JComponent {
             g2.setTransform(oldXForm);
         }
     }
+
+    
 
     
 

@@ -22,6 +22,7 @@ public class Bullet extends GameObject {
         sourceTank = tank;
         bulletX = x;
         bulletY = y;
+        setTeam(tank.getTeam());
     }
     
     
