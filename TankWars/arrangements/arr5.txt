@@ -1,4 +1,6 @@
-DumbTank
+Team Paul
 PaulTank
-ControlTank
-ControlTank
+PaulTank
+Team Dumb
+DumbTank
+DumbTank
