@@ -63,6 +63,10 @@ public int getRotateDegrees ()
 // (useful for not worrying about your own bullets)
 boolean isBulletsOwner(Tank tank) 
  
+// returns the name of the team this player is on
+// if not a team battle, a tank's team is its ordinal number of being created
+String getTeam()
+
 ```
  
 *Important: The image file you create to represent your tank MUST be the same name and a .png file. For example, my Tank is in PaulTank.java and the image is PaulTank.png - The name PaulTank is also used to place my tank in the arena and must be placed in the text file that is being read in as the battle arrangement. See the arrangements folder to know what I mean.
