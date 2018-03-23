@@ -243,7 +243,7 @@ public class Arena extends JComponent {
     
     
     
-    public void endGame()
+    private void endGame()
     {
         
         gameOver = true;
@@ -270,7 +270,7 @@ public class Arena extends JComponent {
         //JOptionPane.showMessageDialog(this, getResults());
     }
     
-    public void endGameTeamBattle()
+    private void endGameTeamBattle()
     {
         gameOver = true;
         if (tanks.size() > 1)
