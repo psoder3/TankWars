@@ -34,6 +34,8 @@ import tankwars.tanks.ControlTank;
  */
 public class Arena extends JComponent {
 
+    public boolean colorTeams = true;
+    public boolean colorBullets = false;
     public boolean canKillTeammates = true;
     public boolean bulletsCollide = false;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -558,21 +560,25 @@ public class Arena extends JComponent {
         {
             if (tank.isAlive())
             {
-                drawObject(tank);
+                drawObject(tank, true);
             }
         }
         for (Bullet bullet : bullets)
         {
             if (bullet.isAlive())
             {
-                drawObject(bullet);
+                drawObject(bullet, false);
             }
         }
         this.repaint();
     }
 
-    private void drawObject(GameObject gameObject) {
+    private void drawObject(GameObject gameObject, boolean isTank) {
         drawCell(gameObject.image, gameObject.getX() * cellWidth, gameObject.getY() * cellHeight, gameObject);
+        if ((isTank || colorBullets) && isTeamBattle && colorTeams)
+        {
+            drawCell(gameObject.team_image, gameObject.getX() * cellWidth, gameObject.getY() * cellHeight, new GameObject());
+        }
     }
 
     private void drawCell(Image img, double x, double y, GameObject t) {

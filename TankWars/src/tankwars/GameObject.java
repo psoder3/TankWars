@@ -4,7 +4,10 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import tankwars.Arena.DrawingImage;
 
@@ -19,11 +22,16 @@ public class GameObject {
     private double y = 0;
     String filename;
     public DrawingImage drawingImage;
+    public Image team_image;
     private int rotateDegrees = 0;
     private boolean canMakeAction = true;
     private Arena arena;
     private boolean alive = true;
     private String team_name;
+    public static ArrayList<String> teamNames;
+    static {
+        teamNames = new ArrayList();
+    }
     
     // super constructor for a bullet to call
     public GameObject(int rotationDegrees, double x, double y, Tank tank)
@@ -31,6 +39,7 @@ public class GameObject {
         this.x = x;
         this.y = y;
         this.rotateDegrees = rotationDegrees;
+        
     }
     
     public int getNumCols()
@@ -61,6 +70,12 @@ public class GameObject {
     public void setTeam(String team_name)
     {
         this.team_name = team_name;
+        try {
+            String filename = "images/team_colors/" + (GameObject.teamNames.indexOf("team " + team_name)+1) + ".png";
+            team_image = ImageIO.read(new File(filename));
+        } catch (IOException ex) {
+            Logger.getLogger(Arena.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public List<Bullet> getBullets()

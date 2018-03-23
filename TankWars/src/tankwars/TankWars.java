@@ -49,7 +49,11 @@ public class TankWars {
                 if (name.substring(0, 5).toLowerCase().equals("team "))
                 {
                     tw.arena.isTeamBattle = true;
-                    current_team = name;
+                    if (!GameObject.teamNames.contains(name.toLowerCase()))
+                    {
+                        GameObject.teamNames.add(name.toLowerCase());
+                    }
+                    current_team = name.toLowerCase();
                 }
                 else
                 {
@@ -91,7 +95,7 @@ public class TankWars {
                     Tank tank = (Tank)o;
                     tank.setTeam(team_name);
                     tw.arena.addTank(tank);
-
+                    
                 } catch (Exception ex) {
                     Logger.getLogger(TankWars.class.getName()).log(Level.SEVERE, null, ex);
                 }
