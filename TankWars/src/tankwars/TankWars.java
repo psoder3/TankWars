@@ -21,7 +21,7 @@ public class TankWars {
     }
     
     Arena arena = new Arena();
-    Frame_Timer frameTimer;
+    //TimerComponent frameTimer;
     Frame_TankWars frameTankWars;
     public static boolean randomArrangement = true;
     
@@ -103,9 +103,9 @@ public class TankWars {
             
             
             tw.frameTankWars = new Frame_TankWars(tw.arena);
-            tw.frameTimer = new Frame_Timer(tw.arena);
-            tw.arena.setFrameTimer(tw.frameTimer);
-            tw.arena.startGame();
+            
+            //tw.arena.setFrameTimer(tw.frameTimer);
+            //tw.arena.startGame();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TankWars.class.getName()).log(Level.SEVERE, null, ex);
         }

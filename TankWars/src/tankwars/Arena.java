@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -34,18 +35,18 @@ import tankwars.tanks.ControlTank;
  */
 public class Arena extends JComponent {
 
-    public boolean colorTeams = true;
-    public boolean colorBullets = false;
-    public boolean canKillTeammates = true;
-    public boolean bulletsCollide = false;
+    public boolean colorTeams2 = true;
+    public boolean colorBullets2 = false;
+    public boolean canKillTeammates2 = true;
+    public boolean bulletsCollide2 = false;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int screen_width = (int)screenSize.getWidth();
     int screen_height = (int)screenSize.getHeight();
     int tankPlaces = 0;
     final int numRows = 13;
     final int numCols = 21;
-    final int cellHeight = (screen_height - 100) / numRows;
-    final int cellWidth = (screen_width - 100) / numCols;
+    final int cellHeight = (screen_height - 150) / numRows;
+    final int cellWidth = (screen_width - 150) / numCols;
     private Image blankImage = null;
     //private int[][] grid = new int[numRows][numCols];
     private ArrayList<Tank> tanks = new ArrayList();
@@ -53,7 +54,7 @@ public class Arena extends JComponent {
     private ArrayList<GameObject> tiles;
     private static boolean update = false;
     private ArrayList<TankAction> actions = new ArrayList();
-    private Frame_Timer frameTimer;
+    //private TimerComponent frameTimer;
     public Tank controlTank1;
     public Tank controlTank2;
     public int timeCounter = 0;
@@ -63,10 +64,11 @@ public class Arena extends JComponent {
     private ArrayList<Tank> resultTanks = new ArrayList();
     public ArrayList<String> tankNames;
     boolean isTeamBattle = false;
+    public Frame_TankWars frame;
     
-    void setFrameTimer(Frame_Timer frameTimer) {
+    /*void setFrameTimer(TimerComponent frameTimer) {
         this.frameTimer = frameTimer;
-    }
+    }*/
     
     public Arena()
     {
@@ -462,8 +464,8 @@ public class Arena extends JComponent {
                                 endGame();
                             }
                         }
+                        frame.timerLabel.setText("    " + secondsLeft);
                         //System.out.println("SECONDS LEFT: " + secondsLeft);
-                        frameTimer.repaint();
                         
                         
                     }
@@ -575,7 +577,7 @@ public class Arena extends JComponent {
 
     private void drawObject(GameObject gameObject, boolean isTank) {
         drawCell(gameObject.image, gameObject.getX() * cellWidth, gameObject.getY() * cellHeight, gameObject);
-        if ((isTank || colorBullets) && isTeamBattle && colorTeams)
+        if ((isTank || frame.colorBullets.isSelected()) && isTeamBattle && frame.colorTeams.isSelected())
         {
             drawCell(gameObject.team_image, gameObject.getX() * cellWidth, gameObject.getY() * cellHeight, new GameObject());
         }
@@ -605,7 +607,7 @@ public class Arena extends JComponent {
         {
             if (b.getX() == tank.getX() && b.getY() == tank.getY())
             {
-                if ((canKillTeammates == false && tank.getTeam().equals(b.getTeam())) || tank.equals(owner))
+                if ((frame.canKillTeammates.isSelected() == false && tank.getTeam().equals(b.getTeam())) || tank.equals(owner))
                 {
                     continue;
                 }
@@ -626,7 +628,7 @@ public class Arena extends JComponent {
                 return true;
             }
         }
-        if (bulletsCollide)
+        if (frame.bulletsCollide.isSelected())
         {
             for (Bullet bullet : bullets)
             {
