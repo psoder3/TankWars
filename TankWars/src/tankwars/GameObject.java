@@ -74,7 +74,7 @@ public class GameObject {
             String filename = "images/team_colors/" + (GameObject.teamNames.indexOf("team " + team_name)+1) + ".png";
             team_image = ImageIO.read(new File(filename));
         } catch (IOException ex) {
-            Logger.getLogger(Arena.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Arena.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
