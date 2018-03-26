@@ -35,10 +35,7 @@ import tankwars.tanks.ControlTank;
  */
 public class Arena extends JComponent {
 
-    public boolean colorTeams2 = true;
-    public boolean colorBullets2 = false;
-    public boolean canKillTeammates2 = true;
-    public boolean bulletsCollide2 = false;
+    
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int screen_width = (int)screenSize.getWidth();
     int screen_height = (int)screenSize.getHeight();
