@@ -613,6 +613,7 @@ public class Arena extends JComponent {
                 tank.destroy();
                 awardBulletPoints(b, true);
                 b.destroy();
+		bullets.remove(b);
                 //System.out.println(tank.toString());
                 tank.setPlaceFinished(tanks.size());
 
