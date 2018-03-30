@@ -139,6 +139,8 @@ https://www.youtube.com/watch?v=5JbqSgMCo78
 
 https://www.youtube.com/watch?v=UvMEr2K-eII
 
+https://youtu.be/K7eNdJU_ufI
+
 ## Controllable Tanks (for Testing Purposes):
 I've programmed a special type of tank that can be controlled (for purposes of testing another tank's response to its actions). To use this tank include a ControlTank in the arrangement you're using. To move up,left,down,right use keys W,A,S,D. To rotate right or left use l and k. To shoot, use spacebar. If you wish to use two control tanks the second one will be controlled with The direction arrows, 5,6 to rotate right and left, 0 to fire.
 
