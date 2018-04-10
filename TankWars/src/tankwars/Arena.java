@@ -35,15 +35,15 @@ import tankwars.tanks.ControlTank;
  */
 public class Arena extends JComponent {
 
-    
+    public int maxNumTanks = 24;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int screen_width = (int)screenSize.getWidth();
     int screen_height = (int)screenSize.getHeight();
     int tankPlaces = 0;
     final int numRows = 13;
     final int numCols = 21;
-    final int cellHeight = (screen_height - 150) / numRows;
-    final int cellWidth = (screen_width - 150) / numCols;
+    final int cellHeight = (screen_height - 500) / numRows;
+    final int cellWidth = (screen_width - 700) / numCols;
     private Image blankImage = null;
     //private int[][] grid = new int[numRows][numCols];
     private ArrayList<Tank> tanks = new ArrayList();
@@ -476,15 +476,23 @@ public class Arena extends JComponent {
     }
     
     public List<Tank> getUnmodifiableTanks() {
-        return Collections.unmodifiableList(tanks);
+        List<Tank> clone_tanks = new ArrayList();
+        for(Tank t : tanks) {
+            clone_tanks.add(t.getCopyTank());
+        }
+        return clone_tanks;
     }
     
     public List<Bullet> getUnmodifiableBullets() {
-        return Collections.unmodifiableList(bullets);
+        List<Bullet> clone_bullets = new ArrayList();
+        for(Bullet b : bullets) {
+            clone_bullets.add(b.getCopy());
+        }
+        return clone_bullets;
     }
     
     public void addTank(Tank tank) {
-        if (tankPlaces > 23)
+        if (tankPlaces >= maxNumTanks)
         {
             return;
         }
@@ -613,7 +621,7 @@ public class Arena extends JComponent {
                 tank.destroy();
                 awardBulletPoints(b, true);
                 b.destroy();
-		bullets.remove(b);
+                bullets.remove(b);
                 //System.out.println(tank.toString());
                 tank.setPlaceFinished(tanks.size());
 
