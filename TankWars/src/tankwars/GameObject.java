@@ -16,6 +16,7 @@ import tankwars.Arena.DrawingImage;
  * @author psoderquist
  */
 public class GameObject {
+    private int numTankRows = 6;
     static Image NULL_IMAGE = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     public Image image = null;
     private double x = 0;
@@ -143,10 +144,53 @@ public class GameObject {
                     y = 9;
                 }
             }
+            else if (a.tankNames.size() == 8)
+            {
+                if (numTanks == 0)
+                {
+                    x = 4;
+                    y = 0;
+                }
+                else if (numTanks == 1)
+                {
+                    x = 16;
+                    y = 0;
+                }
+                else if (numTanks == 2)
+                {
+                    x = 4;
+                    y = 12;
+                }
+                else if (numTanks == 3)
+                {
+                    x = 16;
+                    y = 12;
+                }
+                else if (numTanks == 4)
+                {
+                    x = 8;
+                    y = 4;
+                }
+                else if (numTanks == 5)
+                {
+                    x = 12;
+                    y = 4;
+                }
+                else if (numTanks == 6)
+                {
+                    x = 8;
+                    y = 8;
+                }
+                else if (numTanks == 7)
+                {
+                    x = 12;
+                    y = 8;
+                }
+            }
             else
             {
-                x = (numTanks%6)*4;
-                y = (numTanks/6)*4;
+                x = (numTanks%numTankRows)*4;
+                y = (numTanks/numTankRows)*4;
             }
             
         }
@@ -351,4 +395,15 @@ public class GameObject {
     {
         alive = false;
     }
+    
+    public Tank getCopyTank()
+    {
+        GameObject new_tank = new Tank();
+        new_tank.x = this.x;
+        new_tank.y = this.y;
+        new_tank.rotateDegrees = this.rotateDegrees;
+        new_tank.team_name = this.team_name;
+        return (Tank)new_tank;
+    }
+    
 }

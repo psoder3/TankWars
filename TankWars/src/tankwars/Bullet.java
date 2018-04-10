@@ -10,6 +10,7 @@ public class Bullet extends GameObject {
 
     private double bulletX;
     private double bulletY;
+    private int bulletRotateDegrees;
     
     // give it a high starting value
     private double minFacingDistance = Double.MAX_VALUE;
@@ -22,7 +23,13 @@ public class Bullet extends GameObject {
         sourceTank = tank;
         bulletX = x;
         bulletY = y;
+        bulletRotateDegrees = rotateDegrees;
         setTeam(tank.getTeam());
+    }
+    
+    public Bullet()
+    {
+        
     }
     
     
@@ -75,8 +82,24 @@ public class Bullet extends GameObject {
     {
         return bulletY;
     }
+    
+    @Override
+    public int getRotateDegrees()
+    {
+        return bulletRotateDegrees;
+    }
 
     public boolean isBulletsOwner(Tank tank) {
         return tank.equals(sourceTank);
+    }
+    
+    public Bullet getCopy()
+    {
+        Bullet new_bullet = new Bullet();
+        new_bullet.sourceTank = this.sourceTank;
+        new_bullet.bulletX = this.bulletX;
+        new_bullet.bulletY = this.bulletY;
+        new_bullet.bulletRotateDegrees = this.getRotateDegrees();
+        return new_bullet;
     }
 }
