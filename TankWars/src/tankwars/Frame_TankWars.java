@@ -145,9 +145,13 @@ class Frame_TankWars extends JFrame
                     t.moveRight();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    //System.out.println("Space!");
                     t.fire();
                 }
+                
+                if (e.getKeyCode() == KeyEvent.VK_B) {
+                    t.setBomb();
+                }
+                
             }
             
             Tank t2 = arena.getControlTank2();
@@ -173,8 +177,10 @@ class Frame_TankWars extends JFrame
                     t2.moveRight();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_NUMPAD0) {
-                    //System.out.println("Space!");
                     t2.fire();
+                }
+                if (e.getKeyCode() == KeyEvent.VK_NUMPAD4) {
+                    t2.setBomb();
                 }
             
             }
