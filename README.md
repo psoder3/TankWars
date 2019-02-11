@@ -30,7 +30,8 @@ public void moveLeft()
 
 public void fire()
 
-public void setBomb()
+public void setBomb() 
+(Setting a bomb takes one of your lives. When it explodes it removes 2 lives from everything in its blast radius of 2 squares.)
 ```
 
 if any of the above fail (maybe because somebody was in the place your tank tried to move, your tank simply doesn't do anything for that move. You can avoid that by checking the position before moving, etc.)
