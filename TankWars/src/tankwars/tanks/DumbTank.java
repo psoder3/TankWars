@@ -44,6 +44,10 @@ public class DumbTank extends Tank {
         {
             fire();
         }
+        else if (rand % 10 == 7)
+        {
+            setBomb();
+        }
 
     }  
     
