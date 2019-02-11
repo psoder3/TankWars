@@ -1,4 +1,4 @@
-# Tank Wars - Coding Exercise in Strategic Decision Making
+# Tank Wars - a coding exercise in strategic decision making
 
 ## Project Description
 
