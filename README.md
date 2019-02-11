@@ -8,7 +8,7 @@ Participants will create a class that inherits from Tank class and can do anythi
 
 Be the last tank standing. If there are multiple tanks left over after time expires the tie breaker scenario is as follows:
 
-* 1st Tie Breaker: Most kills
+* 1st Tie Breaker: Most kills (if tanks have multiple lives, a lost life counts as a kill)
 * 2nd Tie Breaker: Most "almost kill"s (shooting within 3 spaces of killing a tank, but it dodges)
 * 3rd Tie Breaker: Best average bullet accuracy (each bullet keeps track of the closest it gets to any other tank)
 
@@ -62,6 +62,10 @@ public List<Tank> getTanks()
 // returns a list of all active lightning in the arena (in read-only form)
 // after touching lightning your tank will forever shoot bullets twice as fast
 public List<Lightning> getLightnings()
+
+// returns a list of all active hearts in the arena (in read-only form)
+// touching a heart will add one life to your tank (if not already at max lives)
+public List<Heart> getHearts()
 
 // returns a list of all active bombs in the arena (in read-only form)
 public List<Bomb> getBombs()
