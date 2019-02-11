@@ -42,12 +42,18 @@ public class Arena extends JComponent {
     int tankPlaces = 0;
     final int numRows = 13;
     final int numCols = 21;
-    final int cellHeight = (screen_height - 500) / numRows;
-    final int cellWidth = (screen_width - 700) / numCols;
+    final int healthSquareSize = 16;
+    final int cellHeight = (screen_height - 250) / numRows;
+    final int cellWidth = (screen_width - 250) / numCols;
     private Image blankImage = null;
+    private Image redSquare = null;
+    private Image greenSquare = null;
+    private Image lightningImg = null;
     //private int[][] grid = new int[numRows][numCols];
     private ArrayList<Tank> tanks = new ArrayList();
     private ArrayList<Bullet> bullets = new ArrayList();
+    private ArrayList<Lightning> lightnings = new ArrayList();
+    private ArrayList<Bomb> bombs = new ArrayList();
     private ArrayList<GameObject> tiles;
     private static boolean update = false;
     private ArrayList<TankAction> actions = new ArrayList();
@@ -62,6 +68,7 @@ public class Arena extends JComponent {
     public ArrayList<String> tankNames;
     boolean isTeamBattle = false;
     public Frame_TankWars frame;
+    private ArrayList<Integer> superTanks;
     
     /*void setFrameTimer(TimerComponent frameTimer) {
         this.frameTimer = frameTimer;
@@ -70,10 +77,31 @@ public class Arena extends JComponent {
     public Arena()
     {
         tiles = new ArrayList();
+        superTanks = new ArrayList();
         try {
-            blankImage = ImageIO.read(new File("images/blank.png"));
+            blankImage = ImageIO.read(new File("images/sand4.png"));//blank.png"));
+            redSquare = ImageIO.read(new File("images/red2.png"));
+            greenSquare = ImageIO.read(new File("images/green2.png"));
+            lightningImg = ImageIO.read(new File("images/lightning2.png"));
         } catch (IOException ex) {
             Logger.getLogger(Arena.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    private void touchingLightning(Tank t)
+    {
+        for (Lightning l : lightnings)
+        {
+            if (l.getX() == t.getX() && l.getY() == t.getY())
+            {
+                if (!superTanks.contains(t.getId()))
+                {
+                    superTanks.add(t.getId());
+                    l.destroy();
+                    return;
+                }
+            }
         }
     }
     
@@ -90,23 +118,45 @@ public class Arena extends JComponent {
         else if (action.action.equals("moveUp"))
         {
             action.actingTank.moveUpAction();
+            touchingLightning(action.actingTank);
         }
         else if (action.action.equals("moveLeft"))
         {
             action.actingTank.moveLeftAction();
+            touchingLightning(action.actingTank);
+            
         }
         else if (action.action.equals("moveRight"))
         {
             action.actingTank.moveRightAction();
+            touchingLightning(action.actingTank);
         }
         else if (action.action.equals("moveDown"))
         {
             action.actingTank.moveDownAction();
+            touchingLightning(action.actingTank);
         }
         else if (action.action.equals("fire"))
         {
             action.actingTank.fireAction(action.actingTank);
         }
+        else if (action.action.equals("setBomb"))
+        {
+            action.actingTank.bombAction(action.actingTank);
+        }
+    }
+    
+    public void setTanksToStartValue(int startingLives)
+    {
+        for (Tank t : tanks)
+        {
+            while (t.getLives() > startingLives) t.loseLife();
+        }
+    }
+    
+    public boolean superShootersContains(int id)
+    {
+        return superTanks.contains(id);
     }
     
     public Tank getControlTank1()
@@ -435,8 +485,9 @@ public class Arena extends JComponent {
                 Timer timer = new Timer(millisecondInterval, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
-                        if (timeCounter == 1)
+                        if (timeCounter % 3 == 0)
                         {
+                            addLightning();
                             //numberTanksAtBeginning = tanks.size();
                         }
                         if (gameOver)
@@ -475,6 +526,59 @@ public class Arena extends JComponent {
         }.start();
     }
     
+    private void addLightning()
+    {
+        int lx = 0;
+        int ly = 0;
+        boolean spotTaken;
+        do
+        {
+            spotTaken = false;
+            lx = (int) (Math.random() * this.numCols);
+            ly = (int) (Math.random() * this.numRows);
+            for (Tank t : tanks)
+            {
+                if (t.getX() == lx && t.getY() == ly) 
+                {
+                    spotTaken = true;
+                    break;
+                }
+            }
+            if (spotTaken) continue;
+            for (Lightning l : lightnings)
+            {
+                if (l.getX() == lx && l.getY() == ly)
+                {
+                    spotTaken = true;
+                    break;
+                }
+            }
+           
+        } while (spotTaken);
+        final Lightning l = new Lightning(lx,ly);
+        
+        
+        lightnings.add(l);
+        
+        int lightningInterval = 1000;
+        
+        Timer timer = new Timer(lightningInterval, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (l == null || !l.isAlive())
+                {
+                    return;
+                }
+                l.tickClock();
+                if (!l.isAlive()) lightnings.remove(l);
+
+                paintBoard();
+            }
+        });
+        timer.setRepeats(true); // Only execute once
+        timer.start();
+    }
+    
     public List<Tank> getUnmodifiableTanks() {
         List<Tank> clone_tanks = new ArrayList();
         for(Tank t : tanks) {
@@ -489,6 +593,22 @@ public class Arena extends JComponent {
             clone_bullets.add(b.getCopy());
         }
         return clone_bullets;
+    }
+    
+    public List<Lightning> getUnmodifiableLightnings() {
+        List<Lightning> clone_lightnings = new ArrayList();
+        for(Lightning l : lightnings) {
+            clone_lightnings.add(l.getCopy());
+        }
+        return clone_lightnings;
+    }
+    
+    public List<Bomb> getUnmodifiableBombs() {
+        List<Bomb> clone_bombs = new ArrayList();
+        for(Bomb b : bombs) {
+            clone_bombs.add(b.getCopy());
+        }
+        return clone_bombs;
     }
     
     public void addTank(Tank tank) {
@@ -577,6 +697,20 @@ public class Arena extends JComponent {
                 drawObject(bullet, false);
             }
         }
+        for (Lightning lightning : lightnings)
+        {
+            if (lightning.isAlive())
+            {
+                drawObject(lightning, false);
+            }
+        }
+        for (Bomb bomb : bombs)
+        {
+            if (bomb.isAlive())
+            {
+                drawObject(bomb, false);
+            }
+        }
         this.repaint();
     }
 
@@ -585,6 +719,24 @@ public class Arena extends JComponent {
         if ((isTank || frame.colorBullets.isSelected()) && isTeamBattle && frame.colorTeams.isSelected())
         {
             drawCell(gameObject.team_image, gameObject.getX() * cellWidth, gameObject.getY() * cellHeight, new GameObject());
+        }
+        if (isTank && frame.livesCheckBox.isSelected())
+        {
+            Tank t = (Tank)gameObject;
+            int maxLives = (int)frame.numLivesBox.getSelectedItem();
+            for (int i = 0; i < maxLives; i++)
+            {
+                Image square;
+                if (i >= t.getLives())
+                {
+                    square = redSquare;
+                }
+                else
+                {
+                    square = greenSquare;
+                }
+                drawCell(square, gameObject.getX() * cellWidth+i*healthSquareSize, gameObject.getY() * cellHeight, new GameObject());
+            }
         }
     }
 
@@ -608,6 +760,18 @@ public class Arena extends JComponent {
         }
         
         
+        for (Bomb bomb : bombs)
+        {
+            if (b.getX() == bomb.getX() && b.getY() == bomb.getY())
+            {
+                b.destroy();
+                bullets.remove(b);
+                explode(bomb);
+                return true;
+            }
+        }
+        
+        
         for (Tank tank : tanks)
         {
             if (b.getX() == tank.getX() && b.getY() == tank.getY())
@@ -618,15 +782,20 @@ public class Arena extends JComponent {
                 }
                 //tanks.remove(tank);
                 //grid[(int)tank.getY()][(int)tank.getX()] = 0;
-                tank.destroy();
+                tank.loseLife();
+                if (tank.getLives() <= 0)
+                {
+                    tank.destroy();
+                    tank.setPlaceFinished(tanks.size());
+                    tanks.remove(tank);
+                    resultTanks.add(tank);                
+                }
                 awardBulletPoints(b, true);
                 b.destroy();
                 bullets.remove(b);
                 //System.out.println(tank.toString());
-                tank.setPlaceFinished(tanks.size());
 
-                tanks.remove(tank);
-                resultTanks.add(tank);
+
                 if (tanks.size() == 1)
                 {
                     //System.out.println(tanks.get(0).toString());
@@ -665,7 +834,13 @@ public class Arena extends JComponent {
         
         bullets.add(b);
         
-        Timer timer = new Timer(250, new ActionListener() {
+        int bulletInterval = 125;
+        if (superTanks.contains(tank.getId()))
+        {
+            bulletInterval = 63;
+        }
+        
+        Timer timer = new Timer(bulletInterval, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 if (!b.isAlive())
@@ -697,6 +872,74 @@ public class Arena extends JComponent {
         timer.start();
     }
     
+    
+    public void setBomb(double x, double y, Tank t)
+    {
+        final Bomb b = new Bomb(x, y, t);
+        for (Bomb b2 : bombs)
+        {
+            if (b2.getX() == x && b2.getY() == y)
+            {
+                return;
+            }
+        }
+        bombs.add(b);
+        
+        int bombInterval = 1000;
+        
+        
+        Timer timer = new Timer(bombInterval, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (!b.isAlive())
+                {
+                    return;
+                }
+                b.tickClock();
+                if (!b.isAlive()) 
+                {
+                    explode(b);
+                }
+                paintBoard();
+            }
+        });
+        timer.setRepeats(true); // Only execute once
+        timer.start();
+    }
+    
+    private void explode(Bomb b)
+    {
+        int blastRadius = 3;
+        ArrayList<Tank> tanksToDie = new ArrayList();
+        for (Tank t : tanks)
+        {
+            if (Math.abs(t.getX() - b.getX()) < blastRadius
+                    &&
+                    Math.abs(t.getY() - b.getY()) < blastRadius)
+            {
+                tanksToDie.add(t);
+            }
+        }
+        
+        for (Tank t : tanksToDie)
+        {
+            t.destroy();
+            tanks.remove(t);
+            b.awardBombKill(true);
+        }
+        b.destroy();
+        bombs.remove(b);
+                
+        for (Bomb b2 : bombs)
+        {
+            if (Math.abs(b2.getX() - b.getX()) < blastRadius
+                    &&
+                    Math.abs(b2.getY() - b.getY()) < blastRadius)
+            {
+                explode(b2);
+            }
+        }
+    }
     
     private void awardBulletPoints(Bullet b, boolean killed)
     {
@@ -851,9 +1094,20 @@ public class Arena extends JComponent {
 	@Override
 	public void draw(Graphics2D g2) {
 		Rectangle2D bounds = rect.getBounds2D();
-		g2.drawImage(image, (int)bounds.getMinX(), (int)bounds.getMinY(), (int)bounds.getMaxX(), (int)bounds.getMaxY(),
-		0, 0, image.getWidth(null), image.getHeight(null), null);
-                
+                if (image == null)
+                {
+                    System.out.println("Pause here");
+                }
+                if (image.getHeight(null) == healthSquareSize)
+                {
+                    g2.drawImage(image, (int)bounds.getMinX(), (int)bounds.getMinY()-(int)((1.0/8)*cellWidth), (int)bounds.getMaxX()-(int)((7.0/8)*cellWidth), (int)bounds.getMaxY()-(int)((7.0/8)*cellWidth),
+                    0, 0, image.getWidth(null), image.getHeight(null), null);
+                }
+                else
+                {
+                    g2.drawImage(image, (int)bounds.getMinX(), (int)bounds.getMinY(), (int)bounds.getMaxX(), (int)bounds.getMaxY(),
+                    0, 0, image.getWidth(null), image.getHeight(null), null);
+                }
 	}	
     }
 }

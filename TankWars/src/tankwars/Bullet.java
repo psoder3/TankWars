@@ -18,7 +18,7 @@ public class Bullet extends GameObject {
     
     public Bullet(int rotateDegrees, double x, double y, Tank tank){
         super(rotateDegrees, x, y, tank);
-        filename = "images/bullets/bullet.png";
+        filename = "images/bullets/bullet2.png";
         image = loadImage(filename);
         sourceTank = tank;
         bulletX = x;

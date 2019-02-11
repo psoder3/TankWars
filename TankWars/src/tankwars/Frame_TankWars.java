@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +32,8 @@ class Frame_TankWars extends JFrame
     //public TimerComponent frameTimer;
     public JLabel timerLabel = new JLabel("    Seconds:");
     public JTextField timeAmount = new JTextField("90");
+    public JComboBox numLivesBox = new JComboBox();
+    public JCheckBox livesCheckBox = new JCheckBox("Lives");
         
     public Frame_TankWars(Arena tiles) 
     {
@@ -46,6 +49,29 @@ class Frame_TankWars extends JFrame
         this.add(arena, BorderLayout.CENTER);
         colorTeams.setSelected(true);
         canKillTeammates.setSelected(true);
+        
+        numLivesBox.addItem(1);
+        numLivesBox.addItem(2);
+        numLivesBox.addItem(3);
+        numLivesBox.addItem(4);
+        numLivesBox.setEnabled(false);
+        livesCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (livesCheckBox.isSelected())
+                {
+                    numLivesBox.setEnabled(true);
+                }
+                else
+                {
+                    numLivesBox.setEnabled(false);
+                }
+            }
+        });
+        
+        controlPanel.add(livesCheckBox);
+        controlPanel.add(numLivesBox);
+        
         controlPanel.add(colorTeams);
         controlPanel.add(colorBullets);
         controlPanel.add(canKillTeammates);
@@ -57,7 +83,9 @@ class Frame_TankWars extends JFrame
               timerLabel.setText("    " + arena.timeLimit);
               arena.startGame();
               startButton.setEnabled(false);
-              
+              numLivesBox.setEnabled(false);
+              livesCheckBox.setEnabled(false);
+              arena.setTanksToStartValue((int)numLivesBox.getSelectedItem());
               controlPanel.remove(timeAmount);
               controlPanel.validate();
               controlPanel.repaint();

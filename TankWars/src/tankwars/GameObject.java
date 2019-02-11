@@ -16,6 +16,8 @@ import tankwars.Arena.DrawingImage;
  * @author psoderquist
  */
 public class GameObject {
+    private int id;
+    public static int current_id = 0;
     private int numTankRows = 6;
     static Image NULL_IMAGE = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     public Image image = null;
@@ -29,6 +31,7 @@ public class GameObject {
     private Arena arena;
     private boolean alive = true;
     private String team_name;
+    private boolean isSuperTank = false;
     public static ArrayList<String> teamNames;
     static {
         teamNames = new ArrayList();
@@ -40,7 +43,12 @@ public class GameObject {
         this.x = x;
         this.y = y;
         this.rotateDegrees = rotationDegrees;
-        
+        this.id = current_id++;
+    }
+    
+    public boolean getIsSuperTank()
+    {
+        return isSuperTank;
     }
     
     public int getNumCols()
@@ -89,6 +97,21 @@ public class GameObject {
         return arena.getUnmodifiableTanks();
     }
     
+    public List<Lightning> getLightnings()
+    {
+        return arena.getUnmodifiableLightnings();
+    }
+    
+    public List<Bomb> getBombs()
+    {
+        return arena.getUnmodifiableBombs();
+    }
+    
+    public boolean isSuperShooter()
+    {
+        return arena.superShootersContains(id);
+    }
+    
     public int getRotateDegrees ()
     {
         return rotateDegrees;
@@ -98,12 +121,14 @@ public class GameObject {
     {
         drawingImage = DI;
         this.arena = arena;
+        this.id = current_id++;
     }
     
     // super constructor for tanks to call
     public GameObject(String type, Arena a)
     {
         arena = a;
+        this.id = current_id++;
         if (type.equals("tank"))
         {                
             int numTanks = a.tankPlaces;
@@ -198,12 +223,17 @@ public class GameObject {
     
     public GameObject()
     {
-        
+        this.id = current_id++;
     }
     
     public boolean isAlive()
     {
         return alive;
+    }
+    
+    public int getId()
+    {
+        return id;
     }
     
     protected Image loadImage(String imageFile) 
@@ -389,6 +419,24 @@ public class GameObject {
     public void fire()
     {
         arena.addAction(new TankAction("fire",(Tank)this));
+    }
+    
+    public boolean bombAction(Tank tank)
+    {
+        if (!canMakeAction || !alive)
+        {
+            return false;
+        }
+        arena.setBomb(x, y, tank);
+        arena.paintBoard();
+        return true;
+    }
+    
+    // Bombs take away two lives if you're within 2 squares of them
+    // It costs the take that lays the bomb 1 life though
+    public void setBomb()
+    {
+        arena.addAction(new TankAction("setBomb",(Tank)this));
     }
     
     public void destroy()
