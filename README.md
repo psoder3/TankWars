@@ -1,4 +1,4 @@
-# AITankWars
+# Tank Wars - Coding Exercise in Strategic Decision Making
 
 ## Project Description
 
