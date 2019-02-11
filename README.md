@@ -29,9 +29,11 @@ public void moveRight()
 public void moveLeft()
 
 public void fire()
+
+public void setBomb()
 ```
 
-if any of the above fail (maybe because somebody was in the place your tank tried to move, you lose that move. You can avoid that by checking the position before moving, etc.)
+if any of the above fail (maybe because somebody was in the place your tank tried to move, your tank simply doesn't do anything for that move. You can avoid that by checking the position before moving, etc.)
  
 
 ## And here are some read-only's that will help you make the move decision each time:
@@ -42,6 +44,9 @@ public int getNumCols()
 // returns the number of Rows in the arena
 public int getNumRows()
  
+// returns the number of lives of a tank (both your tank and other tanks)
+public double getLives()  
+
 // returns x position [0-20] of an object (both bullets and tanks)
 public double getX()  
 
@@ -53,6 +58,16 @@ public List<Bullet> getBullets()
 
 // returns a list of all active tanks in the arena (in read-only form)
 public List<Tank> getTanks()
+
+// returns a list of all active lightning in the arena (in read-only form)
+// after touching lightning your tank will forever shoot bullets twice as fast
+public List<Lightning> getLightnings()
+
+// returns a list of all active bombs in the arena (in read-only form)
+public List<Bomb> getBombs()
+
+// returns the number of seconds left before this bomb explodes
+public int getTimeLeft()
     
 // returns the rotation degrees of an object (both bullets and tanks)
 // 0 is facing right, 90 is down, 180 is left, 270 is up
@@ -122,6 +137,10 @@ public class DumbTank extends Tank {
         {
             fire();
         }
+        else if (rand == 7)
+        {
+            setBomb();
+        }
         
     }
     
@@ -142,7 +161,7 @@ https://www.youtube.com/watch?v=UvMEr2K-eII
 https://youtu.be/K7eNdJU_ufI
 
 ## Controllable Tanks (for Testing Purposes):
-I've programmed a special type of tank that can be controlled (for purposes of testing another tank's response to its actions). To use this tank include a ControlTank in the arrangement you're using. To move up,left,down,right use keys W,A,S,D. To rotate right or left use l and k. To shoot, use spacebar. If you wish to use two control tanks the second one will be controlled with The direction arrows, 5,6 to rotate right and left, 0 to fire.
+I've programmed a special type of tank that can be controlled (for purposes of testing another tank's response to its actions). To use this tank include a ControlTank in the arrangement you're using. To move up,left,down,right use keys W,A,S,D. To rotate right or left use l and k. To shoot, use spacebar. To set a bomb, use b. If you wish to use two control tanks the second one will be controlled with The direction arrows, 5,6 to rotate right and left, 0 to fire, 4 to set a bomb.
 
 ## Team Battles:
 If you wish to do team battles, simply type something such as "Team Awesome" in the arrangement file you're using on the line above all the tanks you wish to be on that team. As long as the first word is "Team" it will add all following tanks to that team until another team is specified. Then you can use the function getTeam() on any tank to know what team it belongs to.
