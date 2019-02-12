@@ -22,7 +22,6 @@ public class Tank extends GameObject implements Comparable<Tank>{
     private double bulletAverageAccuracy = Double.MAX_VALUE;
     private double totalShots = 0;
     private int placeFinished = 0;
-    private int lives = 5;
     
     public Tank(String filename, Arena a)
     {
@@ -53,17 +52,6 @@ public class Tank extends GameObject implements Comparable<Tank>{
         placeFinished = place;
     }
     
-    public void loseLife()
-    {
-        
-        this.lives--;
-        
-    }
-    
-    public int getLives()
-    {
-        return lives;
-    }
     
     @Override
     public int compareTo(Tank o)
@@ -121,5 +109,7 @@ public class Tank extends GameObject implements Comparable<Tank>{
     {
         return totalShots;
     }
+    
+    
     
 }

@@ -10,10 +10,14 @@ package tankwars;
  * @author pablosoderquist
  */
 public class Bomb extends GameObject {
-    private int timeLeft = 3;
+    private int timeLeft = 6;
     private double bomb_x = 0;
     private double bomb_y = 0;
     private Tank sourceTank;
+    private String filename1 = "images/bomb1.png";
+    private String filename2 = "images/bomb2.png";
+    private String filename3 = "images/bomb3.png";
+    
     public Bomb(double x, double y, Tank t)
     {
         super(0, x, y, null);
@@ -31,13 +35,30 @@ public class Bomb extends GameObject {
     {
         return timeLeft;
     }
+    
     public void tickClock()
     {
-        timeLeft--;
+        if (timeLeft % 2 == 1)
+        {
+            image = loadImage(filename);
+        }
+        else if (timeLeft == 2)
+        {
+            image = loadImage(filename1);
+        }
+        else if (timeLeft == 4)
+        {
+            image = loadImage(filename2);
+        }
+        else if (timeLeft == 6)
+        {
+            image = loadImage(filename3);
+        }
         if (timeLeft < 1)
         {
             this.destroy();
         }
+        timeLeft--;
     }
     
     public Bomb getCopy()

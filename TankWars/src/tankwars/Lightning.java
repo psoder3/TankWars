@@ -1,22 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tankwars;
 
-/**
- *
- * @author pablosoderquist
- */
 public class Lightning extends GameObject {
-    private int timeLeft = 10;
+    private int timeLeft = 20;
     private double lightning_x = 0;
     private double lightning_y = 0;
+    private String filename2 = "images/lightningSmall.png";
+    
     public Lightning(double x, double y)
     {
         super(0, x, y, null);
-        filename = "images/lightning2.png";
+        filename = "images/lightningBig.png";
         image = loadImage(filename);
     }
     public int getTimeLeft()
@@ -25,6 +18,14 @@ public class Lightning extends GameObject {
     }
     public void tickClock()
     {
+        if (timeLeft % 2 == 0)
+        {
+            image = loadImage(filename2);
+        }
+        else
+        {
+            image = loadImage(filename);
+        }
         timeLeft--;
         if (timeLeft < 1)
         {

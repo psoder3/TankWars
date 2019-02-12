@@ -48,12 +48,15 @@ public class Arena extends JComponent {
     private Image blankImage = null;
     private Image redSquare = null;
     private Image greenSquare = null;
-    private Image lightningImg = null;
+    
+    public double randPassword;
     //private int[][] grid = new int[numRows][numCols];
     private ArrayList<Tank> tanks = new ArrayList();
     private ArrayList<Bullet> bullets = new ArrayList();
     private ArrayList<Lightning> lightnings = new ArrayList();
+    private ArrayList<Heart> hearts = new ArrayList();
     private ArrayList<Bomb> bombs = new ArrayList();
+    private ArrayList<Explosion> explosions = new ArrayList();
     private ArrayList<GameObject> tiles;
     private static boolean update = false;
     private ArrayList<TankAction> actions = new ArrayList();
@@ -77,12 +80,12 @@ public class Arena extends JComponent {
     public Arena()
     {
         tiles = new ArrayList();
+        randPassword = Math.random();
         superTanks = new ArrayList();
         try {
             blankImage = ImageIO.read(new File("images/sand4.png"));//blank.png"));
             redSquare = ImageIO.read(new File("images/red2.png"));
             greenSquare = ImageIO.read(new File("images/green2.png"));
-            lightningImg = ImageIO.read(new File("images/lightning2.png"));
         } catch (IOException ex) {
             Logger.getLogger(Arena.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -98,10 +101,29 @@ public class Arena extends JComponent {
                 if (!superTanks.contains(t.getId()))
                 {
                     superTanks.add(t.getId());
-                    l.destroy();
-                    return;
                 }
+                l.destroy();
+                return;
             }
+            
+        }
+    }
+    
+    private void touchingHeart(Tank t)
+    {
+        for (Heart h : hearts)
+        {
+            if (h.getX() == t.getX() && h.getY() == t.getY())
+            {
+                if (t.getLives() < (int)this.frame.numLivesBox.getSelectedItem())
+                {
+                    randPassword = Math.random();
+                    t.addLife(randPassword);
+                }
+                h.destroy();
+                return;
+            }
+            
         }
     }
     
@@ -119,22 +141,25 @@ public class Arena extends JComponent {
         {
             action.actingTank.moveUpAction();
             touchingLightning(action.actingTank);
+            touchingHeart(action.actingTank);
         }
         else if (action.action.equals("moveLeft"))
         {
             action.actingTank.moveLeftAction();
             touchingLightning(action.actingTank);
-            
+            touchingHeart(action.actingTank);
         }
         else if (action.action.equals("moveRight"))
         {
             action.actingTank.moveRightAction();
             touchingLightning(action.actingTank);
+            touchingHeart(action.actingTank);
         }
         else if (action.action.equals("moveDown"))
         {
             action.actingTank.moveDownAction();
             touchingLightning(action.actingTank);
+            touchingHeart(action.actingTank);
         }
         else if (action.action.equals("fire"))
         {
@@ -175,7 +200,6 @@ public class Arena extends JComponent {
         {
             if (gameOver)
             {
-                //toRemove.add(b);
                 b.destroy();
             }
             if (b.getX() < -1)
@@ -485,15 +509,18 @@ public class Arena extends JComponent {
                 Timer timer = new Timer(millisecondInterval, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
-                        if (timeCounter % 3 == 0)
-                        {
-                            addLightning();
-                            //numberTanksAtBeginning = tanks.size();
-                        }
+                        
                         if (gameOver)
                         {
                             return;
                         }
+                        if (timeCounter % 3 == 0)
+                        {
+                            addLightning();
+                            addHeart();
+                            //numberTanksAtBeginning = tanks.size();
+                        }
+                        
                         timeCounter++;
                         int secondsExpired = timeCounter;
                         secondsLeft = timeLimit - secondsExpired;
@@ -512,9 +539,7 @@ public class Arena extends JComponent {
                                 endGame();
                             }
                         }
-                        frame.timerLabel.setText("    " + secondsLeft);
-                        //System.out.println("SECONDS LEFT: " + secondsLeft);
-                        
+                        frame.timerLabel.setText("    " + secondsLeft);                        
                         
                     }
 
@@ -560,7 +585,7 @@ public class Arena extends JComponent {
         
         lightnings.add(l);
         
-        int lightningInterval = 1000;
+        int lightningInterval = 500;
         
         Timer timer = new Timer(lightningInterval, new ActionListener() {
             @Override
@@ -571,6 +596,59 @@ public class Arena extends JComponent {
                 }
                 l.tickClock();
                 if (!l.isAlive()) lightnings.remove(l);
+
+                paintBoard();
+            }
+        });
+        timer.setRepeats(true); // Only execute once
+        timer.start();
+    }
+    
+    private void addHeart()
+    {
+        int hx = 0;
+        int hy = 0;
+        boolean spotTaken;
+        do
+        {
+            spotTaken = false;
+            hx = (int) (Math.random() * this.numCols);
+            hy = (int) (Math.random() * this.numRows);
+            for (Tank t : tanks)
+            {
+                if (t.getX() == hx && t.getY() == hy) 
+                {
+                    spotTaken = true;
+                    break;
+                }
+            }
+            if (spotTaken) continue;
+            for (Heart h : hearts)
+            {
+                if (h.getX() == hx && h.getY() == hy)
+                {
+                    spotTaken = true;
+                    break;
+                }
+            }
+           
+        } while (spotTaken);
+        final Heart h = new Heart(hx,hy);
+        
+        
+        hearts.add(h);
+        
+        int heartInterval = 500;
+        
+        Timer timer = new Timer(heartInterval, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (h == null || !h.isAlive())
+                {
+                    return;
+                }
+                h.tickClock();
+                if (!h.isAlive()) hearts.remove(h);
 
                 paintBoard();
             }
@@ -601,6 +679,14 @@ public class Arena extends JComponent {
             clone_lightnings.add(l.getCopy());
         }
         return clone_lightnings;
+    }
+    
+    public List<Heart> getUnmodifiableHearts() {
+        List<Heart> clone_hearts = new ArrayList();
+        for(Heart h : hearts) {
+            clone_hearts.add(h.getCopy());
+        }
+        return clone_hearts;
     }
     
     public List<Bomb> getUnmodifiableBombs() {
@@ -704,11 +790,25 @@ public class Arena extends JComponent {
                 drawObject(lightning, false);
             }
         }
+        for (Heart heart : hearts)
+        {
+            if (heart.isAlive())
+            {
+                drawObject(heart, false);
+            }
+        }
         for (Bomb bomb : bombs)
         {
             if (bomb.isAlive())
             {
                 drawObject(bomb, false);
+            }
+        }
+        for (Explosion explosion : explosions)
+        {
+            if (explosion.isAlive())
+            {
+                drawObject(explosion, false);
             }
         }
         this.repaint();
@@ -884,8 +984,14 @@ public class Arena extends JComponent {
             }
         }
         bombs.add(b);
+        t.loseLife();
+        if (t.getLives() <= 0)
+        {
+            t.destroy();
+            tanks.remove(t);
+        }
         
-        int bombInterval = 1000;
+        int bombInterval = 500;
         
         
         Timer timer = new Timer(bombInterval, new ActionListener() {
@@ -909,15 +1015,46 @@ public class Arena extends JComponent {
     
     private void explode(Bomb b)
     {
-        int blastRadius = 3;
+        final Explosion e = new Explosion(b.getX(), b.getY());
+
+        explosions.add(e);
+        int explosionInterval = 500;
+        Timer timer = new Timer(explosionInterval, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (!e.isAlive())
+                {
+                    return;
+                }
+                e.tickClock();
+                if (!e.isAlive())
+                {
+                    explosions.remove(e);
+                }
+                
+                paintBoard();
+            }
+        });
+        timer.setRepeats(true); // Only execute once
+        timer.start();
+        
+        int blastRadius = 2;
         ArrayList<Tank> tanksToDie = new ArrayList();
         for (Tank t : tanks)
         {
-            if (Math.abs(t.getX() - b.getX()) < blastRadius
+            double diffHoriz = Math.abs(t.getX() - b.getX());
+            double diffVert = Math.abs(t.getY() - b.getY());
+            if (diffHoriz != diffVert && diffHoriz <= blastRadius
                     &&
-                    Math.abs(t.getY() - b.getY()) < blastRadius)
+                    diffVert <= blastRadius)
             {
-                tanksToDie.add(t);
+                b.awardBombKill(true);
+                t.loseLife();
+                t.loseLife();
+                if (t.getLives() <= 0)
+                {
+                    tanksToDie.add(t);
+                }
             }
         }
         
@@ -925,7 +1062,6 @@ public class Arena extends JComponent {
         {
             t.destroy();
             tanks.remove(t);
-            b.awardBombKill(true);
         }
         b.destroy();
         bombs.remove(b);
@@ -1094,11 +1230,17 @@ public class Arena extends JComponent {
 	@Override
 	public void draw(Graphics2D g2) {
 		Rectangle2D bounds = rect.getBounds2D();
+                int explosionSize = 375;
                 if (image == null)
                 {
                     System.out.println("Pause here");
                 }
-                if (image.getHeight(null) == healthSquareSize)
+                if (image.getHeight(null) == explosionSize)
+                {
+                    g2.drawImage(image, (int)bounds.getMinX()-(int)((2)*cellWidth), (int)bounds.getMinY()-(int)((2)*cellHeight), (int)bounds.getMaxX()+(int)((2)*cellWidth), (int)bounds.getMaxY()+(int)((2)*cellHeight),
+                    0, 0, image.getWidth(null), image.getHeight(null), null);
+                }
+                else if (image.getHeight(null) == healthSquareSize)
                 {
                     g2.drawImage(image, (int)bounds.getMinX(), (int)bounds.getMinY()-(int)((1.0/8)*cellWidth), (int)bounds.getMaxX()-(int)((7.0/8)*cellWidth), (int)bounds.getMaxY()-(int)((7.0/8)*cellWidth),
                     0, 0, image.getWidth(null), image.getHeight(null), null);

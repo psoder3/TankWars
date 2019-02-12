@@ -33,6 +33,8 @@ public class GameObject {
     private String team_name;
     private boolean isSuperTank = false;
     public static ArrayList<String> teamNames;
+    private int lives = 5;
+
     static {
         teamNames = new ArrayList();
     }
@@ -100,6 +102,11 @@ public class GameObject {
     public List<Lightning> getLightnings()
     {
         return arena.getUnmodifiableLightnings();
+    }
+    
+    public List<Heart> getHearts()
+    {
+        return arena.getUnmodifiableHearts();
     }
     
     public List<Bomb> getBombs()
@@ -437,6 +444,26 @@ public class GameObject {
     public void setBomb()
     {
         arena.addAction(new TankAction("setBomb",(Tank)this));
+    }
+    
+    public void addLife(double key)
+    {
+        if (key == arena.randPassword)
+        {
+            this.lives++;
+        }
+    }
+    
+    public void loseLife()
+    {
+        
+        this.lives--;
+        
+    }
+    
+    public int getLives()
+    {
+        return lives;
     }
     
     public void destroy()

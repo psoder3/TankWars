@@ -38,7 +38,8 @@ public class TankWars {
             //String filename = "24_paul_tanks.txt";
             //String filename = "multi_teams.txt";
             //String filename = "four_tanks.txt";
-            String filename = "AllTanks.txt";
+            //String filename = "AllTanks.txt";
+            String filename = "paul_vs_control.txt";
             File inputFile = new File("arrangements/" + filename);
             Scanner file_reader = new Scanner(inputFile);
             tw.arena.tankNames = new ArrayList();
