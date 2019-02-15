@@ -21,6 +21,8 @@ public class Bomb extends GameObject {
     public Bomb(double x, double y, Tank t)
     {
         super(0, x, y, null);
+        bomb_x = x;
+        bomb_y = y;
         filename = "images/bomb.png";
         image = loadImage(filename);
         this.sourceTank = t;
@@ -34,6 +36,18 @@ public class Bomb extends GameObject {
     public int getTimeLeft()
     {
         return timeLeft;
+    }
+    
+    @Override
+    public double getX()
+    {
+        return bomb_x;
+    }
+ 
+    @Override
+    public double getY()
+    {
+        return bomb_y;
     }
     
     public void tickClock()
@@ -65,8 +79,8 @@ public class Bomb extends GameObject {
     {
         Bomb new_bomb = new Bomb(this.bomb_x,this.bomb_y, sourceTank);
         new_bomb.timeLeft = this.timeLeft;
-        new_bomb.bomb_x = this.getX();
-        new_bomb.bomb_y = this.getY();
+        new_bomb.bomb_x = this.bomb_x;
+        new_bomb.bomb_y = this.bomb_y;
         return new_bomb;
     }
 }

@@ -8,6 +8,8 @@ public class Heart extends GameObject {
     public Heart(double x, double y)
     {
         super(0, x, y, null);
+        heart_x = x;
+        heart_y = y;
         filename = "images/greenHeart.png";
         image = loadImage(filename);
     }
@@ -32,12 +34,24 @@ public class Heart extends GameObject {
         }
     }
     
+    @Override
+    public double getX()
+    {
+        return heart_x;
+    }
+ 
+    @Override
+    public double getY()
+    {
+        return heart_y;
+    }
+    
     public Heart getCopy()
     {
         Heart new_heart = new Heart(this.heart_x,this.heart_y);
         new_heart.timeLeft = this.timeLeft;
-        new_heart.heart_x = this.getX();
-        new_heart.heart_y = this.getY();
+        new_heart.heart_x = this.heart_x;
+        new_heart.heart_y = this.heart_y;
         return new_heart;
     }
 }

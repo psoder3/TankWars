@@ -9,6 +9,8 @@ public class Lightning extends GameObject {
     public Lightning(double x, double y)
     {
         super(0, x, y, null);
+        lightning_x = x;
+        lightning_y = y;
         filename = "images/lightningBig.png";
         image = loadImage(filename);
     }
@@ -33,12 +35,24 @@ public class Lightning extends GameObject {
         }
     }
     
+    @Override
+    public double getX()
+    {
+        return lightning_x;
+    }
+ 
+    @Override
+    public double getY()
+    {
+        return lightning_y;
+    }
+    
     public Lightning getCopy()
     {
         Lightning new_lightning = new Lightning(this.lightning_x,this.lightning_y);
         new_lightning.timeLeft = this.timeLeft;
-        new_lightning.lightning_x = this.getX();
-        new_lightning.lightning_y = this.getY();
+        new_lightning.lightning_x = this.lightning_x;
+        new_lightning.lightning_y = this.lightning_y;
         return new_lightning;
     }
 }

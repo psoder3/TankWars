@@ -254,8 +254,12 @@ public class GameObject {
         }
     }
     
-    public boolean rotateRightAction()
+    public boolean rotateRightAction(double key)
     {
+        if (key != arena.randPassword)
+        {
+            return false;
+        }
         if (!canMakeAction || !alive)
         {
             return false;
@@ -275,8 +279,12 @@ public class GameObject {
         arena.addAction(new TankAction("rotateRight",(Tank)this));
     }
 
-    public boolean rotateLeftAction()
+    public boolean rotateLeftAction(double key)
     {
+        if (key != arena.randPassword)
+        {
+            return false;
+        }
         if (!canMakeAction || !alive)
         {
             return false;
@@ -296,8 +304,12 @@ public class GameObject {
         arena.addAction(new TankAction("rotateLeft",(Tank)this));
     }
     
-    public boolean moveUpAction()
+    public boolean moveUpAction(double key)
     {
+        if (key != arena.randPassword)
+        {
+            return false;
+        }
         boolean spotTaken = false;
         for (Tank t : getTanks())
         {
@@ -328,8 +340,12 @@ public class GameObject {
         arena.addAction(new TankAction("moveUp",(Tank)this));
     }
     
-    public boolean moveLeftAction()
+    public boolean moveLeftAction(double key)
     {
+        if (key != arena.randPassword)
+        {
+            return false;
+        }
         boolean spotTaken = false;
         for (Tank t : getTanks())
         {
@@ -356,8 +372,12 @@ public class GameObject {
         arena.addAction(new TankAction("moveLeft",(Tank)this));
     }
     
-    public boolean moveDownAction()
+    public boolean moveDownAction(double key)
     {
+        if (key != arena.randPassword)
+        {
+            return false;
+        }
         boolean spotTaken = false;
         for (Tank t : getTanks())
         {
@@ -384,8 +404,12 @@ public class GameObject {
         arena.addAction(new TankAction("moveDown",(Tank)this));
     }
     
-    public boolean moveRightAction()
+    public boolean moveRightAction(double key)
     {
+        if (key != arena.randPassword)
+        {
+            return false;
+        }
         boolean spotTaken = false;
         for (Tank t : getTanks())
         {
@@ -412,8 +436,12 @@ public class GameObject {
         arena.addAction(new TankAction("moveRight",(Tank)this));
     }
     
-    public boolean fireAction(Tank tank)
+    public boolean fireAction(Tank tank, double key)
     {
+        if (key != arena.randPassword)
+        {
+            return false;
+        }
         if (!canMakeAction || !alive)
         {
             return false;
@@ -428,8 +456,12 @@ public class GameObject {
         arena.addAction(new TankAction("fire",(Tank)this));
     }
     
-    public boolean bombAction(Tank tank)
+    public boolean bombAction(Tank tank, double key)
     {
+        if (key != arena.randPassword)
+        {
+            return false;
+        }
         if (!canMakeAction || !alive)
         {
             return false;
@@ -476,6 +508,7 @@ public class GameObject {
         GameObject new_tank = new Tank();
         new_tank.x = this.x;
         new_tank.y = this.y;
+        new_tank.id = this.id;
         new_tank.rotateDegrees = this.rotateDegrees;
         new_tank.team_name = this.team_name;
         return (Tank)new_tank;

@@ -131,43 +131,51 @@ public class Arena extends JComponent {
     {
         if (action.action.equals("rotateLeft"))
         {
-            action.actingTank.rotateLeftAction();
+            randPassword = Math.random();
+            action.actingTank.rotateLeftAction(randPassword);
         }
         else if (action.action.equals("rotateRight"))
         {
-            action.actingTank.rotateRightAction();
+            randPassword = Math.random();
+            action.actingTank.rotateRightAction(randPassword);
         }
         else if (action.action.equals("moveUp"))
         {
-            action.actingTank.moveUpAction();
+            randPassword = Math.random();
+            action.actingTank.moveUpAction(randPassword);
             touchingLightning(action.actingTank);
             touchingHeart(action.actingTank);
         }
         else if (action.action.equals("moveLeft"))
         {
-            action.actingTank.moveLeftAction();
+            randPassword = Math.random();
+            action.actingTank.moveLeftAction(randPassword);
             touchingLightning(action.actingTank);
             touchingHeart(action.actingTank);
         }
         else if (action.action.equals("moveRight"))
         {
-            action.actingTank.moveRightAction();
+            randPassword = Math.random();
+            action.actingTank.moveRightAction(randPassword);
             touchingLightning(action.actingTank);
             touchingHeart(action.actingTank);
         }
         else if (action.action.equals("moveDown"))
         {
-            action.actingTank.moveDownAction();
+            randPassword = Math.random();
+            action.actingTank.moveDownAction(randPassword);
             touchingLightning(action.actingTank);
             touchingHeart(action.actingTank);
         }
         else if (action.action.equals("fire"))
         {
-            action.actingTank.fireAction(action.actingTank);
+            randPassword = Math.random();
+            action.actingTank.fireAction(action.actingTank, randPassword);
         }
         else if (action.action.equals("setBomb"))
         {
-            action.actingTank.bombAction(action.actingTank);
+            randPassword = Math.random();
+            action.actingTank.bombAction(action.actingTank, randPassword);
         }
     }
     
