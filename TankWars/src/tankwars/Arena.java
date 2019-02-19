@@ -103,6 +103,7 @@ public class Arena extends JComponent {
                     superTanks.add(t.getId());
                 }
                 l.destroy();
+		lightnings.remove(l);
                 return;
             }
             
@@ -121,6 +122,7 @@ public class Arena extends JComponent {
                     t.addLife(randPassword);
                 }
                 h.destroy();
+		hearts.remove(h);
                 return;
             }
             
@@ -1026,6 +1028,7 @@ public class Arena extends JComponent {
         final Explosion e = new Explosion(b.getX(), b.getY());
 
         explosions.add(e);
+	bombs.remove(b);
         int explosionInterval = 500;
         Timer timer = new Timer(explosionInterval, new ActionListener() {
             @Override
