@@ -67,6 +67,7 @@ public class Arena extends JComponent {
     public int timeLimit = 90;
     public int secondsLeft = timeLimit;
     private boolean gameOver = false;
+    private static boolean GameStarted = false;
     private ArrayList<Tank> resultTanks = new ArrayList();
     public ArrayList<String> tankNames;
     boolean isTeamBattle = false;
@@ -91,6 +92,10 @@ public class Arena extends JComponent {
         }
     }
     
+    public static boolean gameHasStarted()
+    {
+        return GameStarted;
+    }
     
     private void touchingLightning(Tank t)
     {
@@ -103,7 +108,7 @@ public class Arena extends JComponent {
                     superTanks.add(t.getId());
                 }
                 l.destroy();
-		lightnings.remove(l);
+                lightnings.remove(l);
                 return;
             }
             
@@ -122,7 +127,7 @@ public class Arena extends JComponent {
                     t.addLife(randPassword);
                 }
                 h.destroy();
-		hearts.remove(h);
+                hearts.remove(h);
                 return;
             }
             
@@ -452,6 +457,7 @@ public class Arena extends JComponent {
     
     public void startGame()
     {
+        GameStarted = true;
         new Thread()
         {
             @Override
@@ -1026,9 +1032,8 @@ public class Arena extends JComponent {
     private void explode(Bomb b)
     {
         final Explosion e = new Explosion(b.getX(), b.getY());
-
         explosions.add(e);
-	bombs.remove(b);
+        bombs.remove(b);
         int explosionInterval = 500;
         Timer timer = new Timer(explosionInterval, new ActionListener() {
             @Override
