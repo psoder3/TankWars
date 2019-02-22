@@ -20,7 +20,7 @@ import javax.swing.JTextField;
  *
  * @author psoderquist
  */
-class Frame_TankWars extends JFrame
+public class Frame_TankWars extends JFrame
 {
     public Arena arena;
     JPanel controlPanel = new JPanel();
