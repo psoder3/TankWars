@@ -81,11 +81,15 @@ public int getRotateDegrees ()
  
 // returns true if this bullet was fired by the given tank
 // (useful for not worrying about your own bullets)
-boolean isBulletsOwner(Tank tank) 
+public boolean isBulletsOwner(Tank tank) 
+
+// returns true if this tank has already picked up a lightning
+// (lightning allows your tank to shoot faster)
+public boolean isSuperShooter() 
  
 // returns the name of the team this player is on
 // if not a team battle, a tank's team is its ordinal number of being created
-String getTeam()
+public String getTeam()
 
 ```
  
