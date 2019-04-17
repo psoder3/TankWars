@@ -31,7 +31,6 @@ public class GameObject {
     private Arena arena;
     private boolean alive = true;
     private String team_name;
-    private boolean isSuperTank = false;
     public static ArrayList<String> teamNames;
     private int lives = 5;
 
@@ -46,11 +45,6 @@ public class GameObject {
         this.y = y;
         this.rotateDegrees = rotationDegrees;
         this.id = current_id++;
-    }
-    
-    public boolean getIsSuperTank()
-    {
-        return isSuperTank;
     }
     
     public int getNumCols()
