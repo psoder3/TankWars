@@ -1060,7 +1060,7 @@ public class Arena extends JComponent {
         {
             double diffHoriz = Math.abs(t.getX() - b.getX());
             double diffVert = Math.abs(t.getY() - b.getY());
-            if (diffHoriz != diffVert && diffHoriz <= blastRadius
+            if ((diffHoriz != diffVert || diffHoriz != 2) && diffHoriz <= blastRadius
                     &&
                     diffVert <= blastRadius)
             {
