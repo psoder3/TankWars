@@ -505,6 +505,7 @@ public class GameObject {
         new_tank.id = this.id;
         new_tank.rotateDegrees = this.rotateDegrees;
         new_tank.team_name = this.team_name;
+        new_tank.lives = this.lives;
         return (Tank)new_tank;
     }
     
