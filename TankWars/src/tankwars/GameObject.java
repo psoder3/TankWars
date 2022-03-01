@@ -47,6 +47,11 @@ public class GameObject {
         this.id = current_id++;
     }
     
+    public boolean gameHasStarted()
+    {
+        return arena.gameHasStarted();
+    }
+    
     public int getNumCols()
     {
         return arena.numCols;
