@@ -30,7 +30,10 @@ public class Tank extends GameObject implements Comparable<Tank>{
         Timer timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                tankAction();
+                if (gameHasStarted())
+                {
+                    tankAction();
+                }
             }
         });
         timer.setRepeats(true);
